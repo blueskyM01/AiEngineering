@@ -4,3 +4,5 @@
 /02-Segmetation/yolact/logs
 /02-Segmetation/yolact/__pycache__
 /02-Segmetation/yolact/weights
+/02-Segmetation/yolact/nohup.out
+/02-Segmetation/yolact/results

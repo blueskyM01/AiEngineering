@@ -36,7 +36,7 @@ class zpmc_GenerateTrainLabel:
         coco = COCO(annFile)
 
         # display COCO categories and supercategories
-        CatIds = sorted(coco.getCatIds(["cell_guide"]))  # 获得满足给定过滤条件的category的id
+        CatIds = sorted(coco.getCatIds(["person", "sheep"]))  # 获得满足给定过滤条件的category的id
         # CatIds = sorted(coco.getCatIds())  # 获得满足给定过滤条件的category的id, 不指定的话，则给出所有category的id
 
         # 使用指定的id加载category
