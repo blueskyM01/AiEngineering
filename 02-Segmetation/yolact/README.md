@@ -86,7 +86,10 @@
     "segmentation"为分割的对变形： [[x_1, y_1, x_2, y_2, ..., x_n, y_n]]
     "iscrowd"：默认用0填充即可
     ```
-
+- 使用[show_generated_segmentation.py](annotation_convert/show_generated_segmentation.py)可视化上述格式的数据集
+    ```
+    python show_generated_segmentation.py --label_path anntation文件路径 --class_name_path 类别名称的文件路径 --result_save_dir 可视化结果的存储目录 --image_dir 待可视化图像的存储目录
+    ```
 
 - coco格式的annotation可通过脚本[conver_coco_ann_to_segmentation_label.py](annotation_convert/conver_coco_ann_to_segmentation_label.py)转化：
     ```
@@ -109,28 +112,40 @@
     注：会在--label_save_dir目录下生成--label_save_name和--class_names文件
     ```
 
+- 若使用随机裁剪策略，则数据集的准备通过如下步骤：
+    - 使用[crop_cell_guide.py](annotation_convert/crop_cell_guide.py)生成裁剪数据集
+        ```
+        需要修改的地方：
+        找到line 33：CatIds = sorted(coco.getCatIds(["cell_guide"]))
+        这里面可以指定想要裁剪的目标类别
 
+        python crop_cell_guide.py -images_dir 要裁剪数据集存储目录 --ann_dir coco格式的annotation文件存储目录 --ann_name coco格式的annotation文件名称 --label_save_dir 生成裁剪后的数据集存储目录 --label_save_name 生成的annotation文件名称（.json文件，格式同上述的“训练数据格式”）--images_save_name 裁剪后图片的存储文件夹名称 --class_names 类别名称的存储文件（.name文件） --crop_num 每张图片需要裁剪出图片的数量 --crop_w 裁剪出图像的宽度 --crop_h 裁剪出图像的高度
+
+        运行结束后，会在--label_save_dir下生成--images_save_name的图片集、--label_save_name的annotation文件、--class_names的类别名称文件。
+
+        注：生成的裁剪数据集格式同上述的“训练数据格式”，因此，可以直接用于训练。
+        ```
 
 - 找到[data/config.py](data/config.py)文件，从```line175```开始修改，如下：
-```
-# 修改这里，使用自己的数据集
-ZPMC_CORNERLINE_SEG_CLASSES = ["person", "sheep"] # 你数据集中所有的label标签, 就是上述的--class_names文件中的类别名称，注意：按照--class_names文件中从上到下的顺序填写list
+    ```
+    # 修改这里，使用自己的数据集
+    ZPMC_CORNERLINE_SEG_CLASSES = ["person", "sheep"] # 你数据集中所有的label标签, 就是上述的--class_names文件中的类别名称，注意：按照--class_names文件中从上到下的顺序填写list
 
-ZPMC_CORNERLINE_LABEL_MAP = {1:1, 2:2}  # 对label进行映射。原因：假设'label1': 1, 'label2': 2, 'label3': 4, 这时候，就要映射为：ZPMC_CORNERLINE_LABEL_MAP = {1:1, 2:2, 4:3} 。***   这里，我们在上一步“coco格式的annotation可通过脚本conver_coco_ann_to_segmentation_label.py转化”时，对标签已经做了“连续化”和“排序”，因此，映射时写成这样即可，例如ZPMC_CORNERLINE_SEG_CLASSES = ["person", "sheep", "car", "bus", "cat]共5个类，则ZPMC_CORNERLINE_LABEL_MAP = {1:1, 2:2, 3:3, 4:4, 5:5},注意编号是连续的    ***
+    ZPMC_CORNERLINE_LABEL_MAP = {1:1, 2:2}  # 对label进行映射。原因：假设'label1': 1, 'label2': 2, 'label3': 4, 这时候，就要映射为：ZPMC_CORNERLINE_LABEL_MAP = {1:1, 2:2, 4:3} 。***   这里，我们在上一步“coco格式的annotation可通过脚本conver_coco_ann_to_segmentation_label.py转化”时，对标签已经做了“连续化”和“排序”，因此，映射时写成这样即可，例如ZPMC_CORNERLINE_SEG_CLASSES = ["person", "sheep", "car", "bus", "cat]共5个类，则ZPMC_CORNERLINE_LABEL_MAP = {1:1, 2:2, 3:3, 4:4, 5:5},注意编号是连续的    ***
 
-zpmc_cornerline_segmentation_dataset = dataset_base.copy({
-    'name': 'zpmc cornerline seg 2022',
+    zpmc_cornerline_segmentation_dataset = dataset_base.copy({
+        'name': 'zpmc cornerline seg 2022', # 保持不变
 
-    'train_images': '/software/dataset/ZPMC_FirstLoading_Seg_Temp/train', # 图片的存储目录
-    'valid_images': '/software/dataset/ZPMC_FirstLoading_Seg_Temp/val', # 图片的存储目录
-    
-    'train_info': '/software/dataset/ZPMC_FirstLoading_Seg_Temp/annotations/train.json', # 生成的训练annotation文件路径
-    'valid_info': '/software/dataset/ZPMC_FirstLoading_Seg_Temp/annotations/val.json', # 生成的训练annotation文件路径
+        'train_images': '/software/dataset/ZPMC_FirstLoading_Seg_Temp/train', # 图片的存储目录
+        'valid_images': '/software/dataset/ZPMC_FirstLoading_Seg_Temp/val', # 图片的存储目录
+        
+        'train_info': '/software/dataset/ZPMC_FirstLoading_Seg_Temp/annotations/train.json', # 生成的训练annotation文件路径
+        'valid_info': '/software/dataset/ZPMC_FirstLoading_Seg_Temp/annotations/val.json', # 生成的训练annotation文件路径
 
-    'class_names': ZPMC_CORNERLINE_SEG_CLASSES,
-    'label_map': ZPMC_CORNERLINE_LABEL_MAP
-})
-```
+        'class_names': ZPMC_CORNERLINE_SEG_CLASSES,
+        'label_map': ZPMC_CORNERLINE_LABEL_MAP
+    })
+    ```
 
 ## 二、训练
 - 在yolact目录下新建`weight`文件夹，将预训练权重[resnet101_reducedfc.pth]()拷贝进去
@@ -168,6 +183,10 @@ zpmc_cornerline_segmentation_dataset = dataset_base.copy({
     --class_names：类别名称的存储文件（.name文件）
 
     注：会在--label_save_dir目录下生成--label_save_name和--class_names文件
+    ```
+- 使用随机裁剪策略，使用[conver_eval_label.py](annotation_convert/conver_eval_label.py)脚本转换
+    ```
+    python conver_eval_label.py --ann_dir 使用crop_cell_guide.py生成的annotaion文件存储目录 --ann_name 使用crop_cell_guide.py生成的annotaion文件名称  --label_save_dir 生成的annotation文件存储目录 --label_save_name 生成的annotation文件名称（.txt文件）
     ```
 
 - 生成测试结果

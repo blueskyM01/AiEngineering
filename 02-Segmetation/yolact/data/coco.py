@@ -8,7 +8,7 @@ import cv2, json
 import numpy as np
 from .config import cfg
 from pycocotools import mask as maskUtils
-import random
+import random, shutil
 
 def get_label_map():
     if cfg.dataset.label_map is None:
@@ -76,6 +76,8 @@ class COCODetection(data.Dataset):
             self.coco = json.load(load_f)
         load_f.close()
         self.image_names = list(self.coco.keys())
+        
+        random.shuffle(self.image_names)
         
         # self.ids = list(self.coco.imgToAnns.keys()) # coco.imgToAnns.keys() 数据集中有GT对应的图像样本的id号（用来过滤没有标签的样本）
         # if len(self.ids) == 0 or not has_gt: #pass

@@ -173,18 +173,18 @@ pascal_sbd_dataset = dataset_base.copy({
 })
 
 # 修改这里，使用自己的数据集
-ZPMC_CORNERLINE_SEG_CLASSES = ["person", "sheep"]
+ZPMC_CORNERLINE_SEG_CLASSES = ["cell_guide"]
 
-ZPMC_CORNERLINE_LABEL_MAP = {1:1, 2:2}
+ZPMC_CORNERLINE_LABEL_MAP = {1:1}
 
 zpmc_cornerline_segmentation_dataset = dataset_base.copy({
     'name': 'zpmc lockhole seg 2022',
 
-    'train_images': '/root/code/dataset/coco/train2017',
-    'valid_images': '/root/code/dataset/coco/val2017',
+    'train_images': '/root/code/AiEngineering/02-Segmetation/yolact/result_temp/train_crop_images',
+    'valid_images': '/root/code/AiEngineering/02-Segmetation/yolact/result_temp/val_crop_images',
     
-    'train_info': '/root/code/AiEngineering/02-Segmetation/yolact/result_temp/coco_train_segmentation.json',
-    'valid_info': '/root/code/AiEngineering/02-Segmetation/yolact/result_temp/coco_val_segmentation.json',
+    'train_info': '/root/code/AiEngineering/02-Segmetation/yolact/result_temp/ceLL_guide_train_v1_seg.json',
+    'valid_info': '/root/code/AiEngineering/02-Segmetation/yolact/result_temp/ceLL_guide_val_v1_seg.json',
 
     'class_names': ZPMC_CORNERLINE_SEG_CLASSES,
     'label_map': ZPMC_CORNERLINE_LABEL_MAP

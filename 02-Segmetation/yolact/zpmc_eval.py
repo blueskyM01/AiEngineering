@@ -439,19 +439,6 @@ def draw_caption(img, b, caption, score):
     return img
 
 def get_label(label_path):
-    '''
-    读取的".txt"文件的每行存储格式为： [num_gt, image_absolute_path, img_width, img_height, label_index, box_1, label_index, box_2, ..., label_index, box_n]
-                              Box_x format: label_index x_min y_min x_max y_max. (The origin of coordinates is at the left top corner, left top => (xmin, ymin), right bottom => (xmax, ymax).)
-                              num_gt：
-                              label_index： is in range [0, class_num - 1].
-                              For example:
-                              2 xxx/xxx/a.jpg 1920 1080 0 453 369 473 391 1 588 245 608 268
-                              2 xxx/xxx/b.jpg 1920 1080 1 466 403 485 422 2 793 300 809 320
-
-    :param label_dir:
-    :param label_name:
-    :return: lines： 将".txt"文件的每行变成列表， 存储到lines这个大列表中
-    '''
     lines = []
     with open(label_path, 'r') as f:
         line = f.readline()
@@ -462,15 +449,6 @@ def get_label(label_path):
     return lines
 
 def parse_line(line):
-    '''
-    功能： 获取每张图像上所有的标注矩形框和标注类别
-    :param line: ".txt"文件的每行变成列表（每个元素都是字符串）
-    :return: num_gt： 数据集中有多少个gt
-             img_path： 图像的存储路径（绝对路径）
-             annotations： [[xmin, ymin, xmax, ymax, label], [xmin, ymin, xmax, ymax, , label], ....]
-             img_width： 图像的宽度
-             img_height： 图像的高度
-    '''
     num_gt = int(line[0])
     img_path = line[1]
     img_width = int(line[2])
