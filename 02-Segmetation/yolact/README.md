@@ -148,7 +148,7 @@
     ```
 
 ## 二、训练
-- 在yolact目录下新建`weight`文件夹，将预训练权重[resnet101_reducedfc.pth]()拷贝进去
+- 在yolact目录下新建`weights`文件夹，将预训练权重[resnet101_reducedfc.pth](https://pan.baidu.com/s/1iCI7A5pDowtPgyMq0o7HuA)（提取码：1234）拷贝进去
 - 训练指令
     ```
     $ python train.py --config=yolact_base_config --dataset=zpmc_cornerline_segmentation_dataset --log_folder=logs --save_folder=weights

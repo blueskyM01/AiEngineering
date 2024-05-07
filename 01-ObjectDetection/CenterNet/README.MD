@@ -119,7 +119,7 @@
 
 - 运行训练代码
     - 在`code`目录下新建`model_data`和`logs`文件夹：`mkdir model_data`, `mkdir logs` 
-    - 将`预训练模型`拷贝到`model_data`
+    - 将[预训练模型](https://pan.baidu.com/s/1DkJUkFT3i0jK4W7Qsu0yOA )(提取码：1234)拷贝到`model_data`
     - 在`code`目录下找到`train.py`文件，修改相关参数：
         ```
         classes_path = "第一步‘制作训练标签’中的‘类别标签’路径"
