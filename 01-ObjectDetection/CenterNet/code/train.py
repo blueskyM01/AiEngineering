@@ -2,7 +2,7 @@
 #       对数据集进行训练
 #-------------------------------------#
 import datetime
-import os
+import os, random
 
 import numpy as np
 import torch
@@ -341,6 +341,7 @@ if __name__ == "__main__":
     #---------------------------#
     with open(train_annotation_path) as f:
         train_lines = f.readlines()
+    random.shuffle(train_lines)
     with open(val_annotation_path) as f:
         val_lines   = f.readlines()
     num_train   = len(train_lines)

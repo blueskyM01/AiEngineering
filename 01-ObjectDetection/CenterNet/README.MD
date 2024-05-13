@@ -233,7 +233,7 @@
 
 - 运行`训练`代码
     - 在`code`目录下新建`model_data`和`logs`文件夹：`mkdir model_data`, `mkdir logs` 
-    - 将`预训练模型`拷贝到`model_data`
+    - 将[预训练模型](https://pan.baidu.com/s/1DkJUkFT3i0jK4W7Qsu0yOA )(提取码：1234)拷贝到`model_data`
     - 在`code`目录下找到`train_keypoints.py`文件，修改相关参数：
         ```
         classes_path = "第一步‘制作训练标签’中的‘类别标签’路径"
@@ -265,4 +265,5 @@
     - `cd code`
     - `python predict_keypoints.py --video_image_path xxxxx(需要测试图片或视频的路径)`
     - 预测成功后，会在`img_out`目录下生成`results.jpg`
+    - 注意：训练要达到60个epoch才有预测效果
 - arm

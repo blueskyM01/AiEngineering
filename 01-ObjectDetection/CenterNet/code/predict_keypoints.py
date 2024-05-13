@@ -13,7 +13,7 @@ from centernet_keypoints import CenterNet
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--video_image_path", default='/root/code/test_meterials/cell_guide_simulator/br.mp4', type=str, help="")
+    parser.add_argument("--video_image_path", default='/root/code/dataset/crop_cell_guide/images/train_v1/image_0000000000_cls_0_0.jpg', type=str, help="")
     cfg = parser.parse_args()
     
     centernet = CenterNet()
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     #   'heatmap'           表示进行预测结果的热力图可视化，详情查看下方注释。
     #   'export_onnx'       表示将模型导出为onnx，需要pytorch1.7.1以上。
     #----------------------------------------------------------------------------------------------------------#
-    mode = "video_crop"
+    mode = "predict"
     #-------------------------------------------------------------------------#
     #   crop                指定了是否在单张图片预测后对目标进行截取
     #   count               指定了是否进行目标的计数
@@ -163,7 +163,7 @@ if __name__ == "__main__":
             if not ref:
                 break
             
-            frame_crop1 = frame[954:1210, 284:540, :] # bl
+            frame_crop1 = frame[1000:1256, 504:760, :] # bl
             # 格式转变，BGRtoRGB
             frame_crop1 = cv2.cvtColor(frame_crop1,cv2.COLOR_BGR2RGB)
             # 转变成Image
@@ -173,7 +173,7 @@ if __name__ == "__main__":
             # # RGBtoBGR满足opencv显示格式
             # frame_crop1 = cv2.cvtColor(frame_crop1,cv2.COLOR_RGB2BGR)
             
-            frame_crop2 = frame[659:915, 321:577, :] # bl
+            frame_crop2 = frame[1000:1256, 504:760, :] # bl
             # 格式转变，BGRtoRGB
             frame_crop2 = cv2.cvtColor(frame_crop2,cv2.COLOR_BGR2RGB)
             # 转变成Image

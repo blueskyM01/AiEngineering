@@ -30,8 +30,8 @@ class CenterNet(object):
         #   验证集损失较低不代表mAP较高，仅代表该权值在验证集上泛化性能较好。
         #   如果出现shape不匹配，同时要注意训练时的model_path和classes_path参数的修改
         #--------------------------------------------------------------------------#
-        "model_path"        : '/root/code/AI-Note-Demo/01-ObjectDetection/CenterNet/code/logs/ep080-loss0.426-val_loss0.000.pth',
-        "classes_path"      : '/root/code/AI-Note-Demo/01-ObjectDetection/CenterNet/code/img_out/Crop_CellGuideContainerCorner/annotation/crop_classes.txt',
+        "model_path"        : '/root/code/AiEngineering/01-ObjectDetection/CenterNet/code/logs/ep057-loss0.494-val_loss0.000.pth',
+        "classes_path"      : '/root/code/dataset/crop_cell_guide/annotation/cell_guide.txt',
         #--------------------------------------------------------------------------#
         #   用于选择所使用的模型的主干
         #   resnet50, hourglass
@@ -44,7 +44,7 @@ class CenterNet(object):
         #--------------------------------------------------------------------------#
         #   只有得分大于置信度的预测框会被保留下来
         #--------------------------------------------------------------------------#
-        "confidence"        : 0.3,
+        "confidence"        : 0.09,
         #---------------------------------------------------------------------#
         #   非极大抑制所用到的nms_iou大小
         #---------------------------------------------------------------------#

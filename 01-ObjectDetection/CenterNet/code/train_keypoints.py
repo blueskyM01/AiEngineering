@@ -5,7 +5,7 @@ import datetime
 import os
 
 import numpy as np
-import torch, json
+import torch, json, random
 import torch.backends.cudnn as cudnn
 import torch.distributed as dist
 import torch.optim as optim
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     #   classes_path    指向model_data下的txt，与自己训练的数据集相关 
     #                   训练前一定要修改classes_path，使其对应自己的数据集
     #---------------------------------------------------------------------#
-    classes_path    = '/root/code/AI-Note-Demo/01-ObjectDetection/CenterNet/code/img_out/CellGuideContainerCorner.txt'
+    classes_path    = '/root/code/dataset/crop_cell_guide/annotation/cell_guide.txt'
     #----------------------------------------------------------------------------------------------------------------------------#
     #   权值文件的下载请看README，可以通过网盘下载。模型的 预训练权重 对不同数据集是通用的，因为特征是通用的。
     #   模型的 预训练权重 比较重要的部分是 主干特征提取网络的权值部分，用于进行特征提取。
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     #   一般来讲，网络从0开始的训练效果会很差，因为权值太过随机，特征提取效果不明显，因此非常、非常、非常不建议大家从0开始训练！
     #   如果一定要从0开始，可以了解imagenet数据集，首先训练分类模型，获得网络的主干部分权值，分类模型的 主干部分 和该模型通用，基于此进行训练。
     #----------------------------------------------------------------------------------------------------------------------------#
-    model_path      = '/root/code/AI-Note-Demo/01-ObjectDetection/CenterNet/code/model_data/centernet_resnet50_voc.pth'
+    model_path      = '/root/code/AiEngineering/01-ObjectDetection/CenterNet/code/model_data/centernet_resnet50_voc.pth'
     #------------------------------------------------------#
     #   input_shape     输入的shape大小，32的倍数
     #------------------------------------------------------#
@@ -225,8 +225,8 @@ if __name__ == "__main__":
     #   train_annotation_path   训练图片路径和标签
     #   val_annotation_path     验证图片路径和标签
     #------------------------------------------------------#
-    train_annotation_path   = '/root/code/AI-Note-Demo/01-ObjectDetection/CenterNet/code/img_out/Crop_CellGuideContainerCorner_train01.json'
-    val_annotation_path     = '/root/code/AI-Note-Demo/01-ObjectDetection/CenterNet/code/img_out/Crop_CellGuideContainerCorner_val01.json'
+    train_annotation_path   = '/root/code/dataset/crop_cell_guide/annotation/train_v1.json'
+    val_annotation_path     = '/root/code/dataset/crop_cell_guide/annotation/val_v1.json'
     
     seed_everything(seed)
     #------------------------------------------------------#
@@ -352,6 +352,7 @@ if __name__ == "__main__":
                 else:
                     train_line += str(ele[i]) + ' '
         train_lines.append(train_line)
+    random.shuffle(train_lines)
     
     with open(val_annotation_path, 'r') as load_f:
         load_val_dict = json.load(load_f)

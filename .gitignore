@@ -1,5 +1,7 @@
 /.vscode
 /01-ObjectDetection/CenterNet/code/weight
+/01-ObjectDetection/CenterNet/code/logs
+/01-ObjectDetection/CenterNet/code/model_data
 /02-Segmetation/yolact/result_temp
 /02-Segmetation/yolact/logs
 /02-Segmetation/yolact/__pycache__
