@@ -267,3 +267,16 @@
     - 预测成功后，会在`img_out`目录下生成`results.jpg`
     - 注意：训练要达到60个epoch才有预测效果
 - arm
+
+#### 4.3.3 Estimation
+
+#### 4.3.4 convert to onnx
+- x86
+    - `cd code`
+    - `python kepoints_onnx.py --video_image_path 需要推理的图片`
+    - 程序执行完成后，会在`01-ObjectDetection/CenterNet/code/model_data`下生成`models.onnx`文件
+#### 4.3.5 onnx convert to trt
+- x86
+    - `cd code`
+    - `python keypoints_trt.py --onnxFile onnx文件路径 --trtFile_save_dir 生成的trt文件存储目录 --trtFile_save_name 生成的trt文件存储名称 --FPMode FP32或FP16 （保存浮点数32位或16位）`
+    - 例：`python keypoints_trt.py --onnxFile 01-ObjectDetection/CenterNet/code/model_data/models.onnx --trtFile_save_dir 01-ObjectDetection/CenterNet/code/trt --trtFile_save_name centernet_keypoints32.trt --FPMode FP32`
