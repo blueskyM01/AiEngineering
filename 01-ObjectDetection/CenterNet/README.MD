@@ -275,8 +275,14 @@
     - `cd code`
     - `python kepoints_onnx.py --video_image_path 需要推理的图片`
     - 程序执行完成后，会在`01-ObjectDetection/CenterNet/code/model_data`下生成`models.onnx`文件
+    - 需要指定batch_size,修改[centernet_keypoints_onnx.py](code/centernet_keypoints_onnx.py), line 460处
 #### 4.3.5 onnx convert to trt
-- x86
+- 单帧预测（batch size = 1）
     - `cd code`
-    - `python keypoints_trt.py --onnxFile onnx文件路径 --trtFile_save_dir 生成的trt文件存储目录 --trtFile_save_name 生成的trt文件存储名称 --FPMode FP32或FP16 （保存浮点数32位或16位）`
-    - 例：`python keypoints_trt.py --onnxFile 01-ObjectDetection/CenterNet/code/model_data/models.onnx --trtFile_save_dir 01-ObjectDetection/CenterNet/code/trt --trtFile_save_name centernet_keypoints32.trt --FPMode FP32`
+    - `python keypoints_trt.py --onnxFile onnx文件路径 --trtFile_save_dir 生成的trt文件存储目录 --trtFile_save_name 生成的trt文件存储名称 --FPMode FP32或FP16 （保存浮点数32位或16位）--images_dir 要预测图片的目录 --detect_save_dir 预测结果存储的目录 --class_file 类别标签（.txt）`
+    - 例：`python keypoints_trt.py --onnxFile 01-ObjectDetection/CenterNet/code/model_data/models.onnx --trtFile_save_dir 01-ObjectDetection/CenterNet/code/trt --trtFile_save_name centernet_keypoints32.trt --FPMode FP32 --images_dir /root/code/dataset/crop_cell_guide/images/val_v1 --detect_save_dir xxx/results --class_file xxx/cell_guide.txt`
+
+- 多帧预测（batch size >= 1）
+    - `cd code`
+    - `python keypoints_trt_multi_image.py --onnxFile onnx文件路径 --trtFile_save_dir 生成的trt文件存储目录 --trtFile_save_name 生成的trt文件存储名称 --FPMode FP32或FP16 （保存浮点数32位或16位）--images_dir 要预测图片的目录 --detect_save_dir 预测结果存储的目录 --class_file 类别标签（.txt）`
+    - 例：`python keypoints_trt_multi_image.py --onnxFile 01-ObjectDetection/CenterNet/code/model_data/models.onnx --trtFile_save_dir 01-ObjectDetection/CenterNet/code/trt --trtFile_save_name centernet_keypoints32.trt --FPMode FP32 --images_dir /root/code/dataset/crop_cell_guide/images/val_v1 --detect_save_dir xxx/results --class_file xxx/cell_guide.txt`

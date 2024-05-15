@@ -266,7 +266,7 @@ def zpmc_onnx2trt(onnxFile, trtFile_save_dir, trtFile_save_name, FPMode, images_
 
 
     batch_size, nHeight, nWidth, _  = inputTensor.shape
-    profile.set_shape(inputTensor.name, (1, nHeight, nWidth, 3), (1, nHeight, nWidth, 3), (1, nHeight, nWidth, 3)) # 最小batch，常见batch，最大batch
+    profile.set_shape(inputTensor.name, (12, nHeight, nWidth, 3), (12, nHeight, nWidth, 3), (12, nHeight, nWidth, 3)) # 最小batch，常见batch，最大batch
     config.add_optimization_profile(profile)
 
     trtFile = os.path.join(trtFile_save_dir, trtFile_save_name)
@@ -294,45 +294,53 @@ def zpmc_onnx2trt(onnxFile, trtFile_save_dir, trtFile_save_name, FPMode, images_
     inputs, outputs, bindings, stream = common.allocate_buffers(engine)
     
     
-    images_list = os.listdir(images_dir)
+    images_list = os.listdir(images_dir)[0:12]
     
-    
+    input_list = []
+    input_src = []
     for image_name in images_list:
         image = cv2.imread(os.path.join(images_dir, image_name))
-        image_shape = image.shape[0:2]
-        starttime = datetime.datetime.now()  
-        
+        image_shape = image.shape[0:2]        
         image_data = cv2.resize(image, (input_shape[1], input_shape[0]))
-        image_data = np.expand_dims(image_data, 0)
-        inputs[0].host = np.ascontiguousarray(image_data, dtype=np.float32)
-        trt_outputs = common.do_inference_v2(context, bindings=bindings, inputs=inputs, outputs=outputs, stream=stream)
-
-        trt_outputs_shape = [(batch_size, 2, 128, 128), (batch_size, 2, 128, 128)]
-        heat_map = trt_outputs[1].reshape(trt_outputs_shape[0])
-        p_w_h = trt_outputs[0].reshape(trt_outputs_shape[1])
-        print('heat_map: {}'.format(heat_map.shape))
-        print('p_w_h: {}'.format(p_w_h.shape))
-
-        outputs_ = decode_bbox(heat_map, p_w_h, 0.3, False)
-        
-        results = postprocess(outputs_, image_shape, input_shape, False, 0.3)
-                
-        #--------------------------------------#
-        #   如果没有检测到物体，则返回原图
-        #--------------------------------------#
-        if results[0] is None:
-            return image
-
-        top_label   = np.array(results[0][:, 3], dtype = 'int32')
-        top_conf    = results[0][:, 2]
-        top_boxes   = results[0][:, :2]
-        endtime = datetime.datetime.now()
-        timediff = (endtime - starttime).total_seconds()
-        print(1/timediff)
+        input_list.append(image_data)
+        input_src.append(image)
     
-        # src = cv2.cvtColor(image,cv2.COLOR_RGB2BGR) 
-        src = image
+    starttime = datetime.datetime.now()      
+    image_data = np.array(input_list)
+    inputs[0].host = np.ascontiguousarray(image_data, dtype=np.float32)
+    trt_outputs = common.do_inference_v2(context, bindings=bindings, inputs=inputs, outputs=outputs, stream=stream)
 
+    trt_outputs_shape = [(batch_size, 2, 128, 128), (batch_size, 2, 128, 128)]
+    heat_map = trt_outputs[1].reshape(trt_outputs_shape[0])
+    p_w_h = trt_outputs[0].reshape(trt_outputs_shape[1])
+    print('heat_map: {}'.format(heat_map.shape))
+    print('p_w_h: {}'.format(p_w_h.shape))
+
+    outputs_ = decode_bbox(heat_map, p_w_h, 0.3, False)
+    
+    results = postprocess(outputs_, image_shape, input_shape, False, 0.3)
+    endtime = datetime.datetime.now()
+    timediff = (endtime - starttime).total_seconds()
+    print(1/timediff)
+            
+    # #--------------------------------------#
+    # #   如果没有检测到物体，则返回原图
+    # #--------------------------------------#
+    # if results[0] is None:
+    #     return image
+
+    for idx in range(len(input_list)):
+        src = input_src[idx]
+        save_name = images_list[idx]
+        print(save_name)
+        if results[idx] is None:
+            cv2.imwrite(os.path.join(detect_save_dir, save_name), src)
+            continue
+        top_label   = np.array(results[idx][:, 3], dtype = 'int32')
+        top_conf    = results[idx][:, 2]
+        top_boxes   = results[idx][:, :2]
+
+        
         for i, c in list(enumerate(top_label)):
             predicted_class = class_names[int(c)]
             box             = top_boxes[i]
@@ -343,13 +351,13 @@ def zpmc_onnx2trt(onnxFile, trtFile_save_dir, trtFile_save_name, FPMode, images_
             y_c    = max(0, np.floor(y_c).astype('int32'))
             # y_c  = min(image.size[1], np.floor(y_c).astype('int32'))
             # x_c   = min(image.size[0], np.floor(x_c).astype('int32'))
-            y_c  = min(image.shape[0], np.floor(y_c).astype('int32'))
-            x_c   = min(image.shape[1], np.floor(x_c).astype('int32'))
+            y_c  = min(src.shape[0], np.floor(y_c).astype('int32'))
+            x_c   = min(src.shape[1], np.floor(x_c).astype('int32'))
 
             label = '{} {:.2f}'.format(predicted_class, score)
             print(label, x_c, y_c)
             cv2.circle(src, (x_c, y_c), 4, (0,0,255), -1)
-        cv2.imwrite(os.path.join(detect_save_dir, image_name), src)
+        cv2.imwrite(os.path.join(detect_save_dir, save_name), src)
         
     
     
