@@ -13,7 +13,7 @@ from centernet_keypoints import CenterNet
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--video_image_path", default='/root/code/dataset/crop_cell_guide/images/train_v1/image_0000000000_cls_0_0.jpg', type=str, help="")
+    parser.add_argument("--video_image_path", default='/root/code/dataset/crop_cell_guide/images/val_v1/image_0000000056_cls_0_6.jpg', type=str, help="")
     cfg = parser.parse_args()
     
     centernet = CenterNet()

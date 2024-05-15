@@ -7,7 +7,7 @@ import torch
 import torch.backends.cudnn as cudnn
 from PIL import ImageDraw, ImageFont
 
-from nets.centernet_keypoints import CenterNet_keypoints_HourglassNet, CenterNet_keypoints_Resnet50
+from nets.centernet_keypoints_onnx import CenterNet_keypoints_HourglassNet, CenterNet_keypoints_Resnet50
 from utils.utils import (cvtColor, get_classes, preprocess_input, resize_image,
                          show_config)
 from utils.utils_bbox_keypoints import decode_bbox, postprocess

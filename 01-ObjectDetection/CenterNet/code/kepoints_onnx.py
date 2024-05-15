@@ -8,7 +8,7 @@ import cv2, argparse
 import numpy as np
 from PIL import Image
 
-from centernet_keypoints import CenterNet
+from centernet_keypoints_onnx import CenterNet
 
 
 if __name__ == "__main__":
@@ -76,5 +76,5 @@ if __name__ == "__main__":
     simplify        = True
     onnx_save_path  = "model_data/models.onnx"
     
-    image = Image.open(cfg.video_image_path)
+    image = cv2.imread(cfg.video_image_path)
     centernet.convert_to_onnx_xian(onnx_save_path, image)

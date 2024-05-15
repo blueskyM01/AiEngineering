@@ -133,7 +133,7 @@ def decode_bbox(pred_hms, pred_offsets, confidence, cuda):
     #   进行热力图的非极大抑制，利用3x3的卷积对热力图进行最大值筛选
     #   找出一定区域内，得分最大的特征点。
     #-------------------------------------------------------------------------#
-    pred_hms = pool_nms(pred_hms)
+    # pred_hms = pool_nms(pred_hms)
     
     b, c, output_h, output_w = pred_hms.shape
     detects = []
@@ -287,18 +287,14 @@ def zpmc_onnx2trt(onnxFile, trtFile_save_dir, trtFile_save_name, FPMode, video_d
     inputTensor = network.get_input(0)
     outputTensor0 = network.get_output(0)
     outputTensor1 = network.get_output(1)
-    # outputTensor2 = network.get_output(2)
-    # outputTensor3 = network.get_output(3)
-    # outputTensor4 = network.get_output(4)
+
     print('inputTensor:', inputTensor.name, inputTensor.shape)
     print('outputTensor0:', outputTensor0.name, outputTensor0.shape)
     print('outputTensor1:', outputTensor1.name, outputTensor1.shape)
-    # print('outputTensor2:', outputTensor2.name, outputTensor2.shape)
-    # print('outputTensor3:', outputTensor3.name, outputTensor3.shape)
-    # print('outputTensor4:', outputTensor4.name, outputTensor4.shape)
 
-    batch_size, _, nHeight, nWidth = inputTensor.shape
-    profile.set_shape(inputTensor.name, (1, 3, nHeight, nWidth), (1, 3, nHeight, nWidth), (1, 3, nHeight, nWidth)) # 最小batch，常见batch，最大batch
+
+    batch_size, nHeight, nWidth, _  = inputTensor.shape
+    profile.set_shape(inputTensor.name, (1, nHeight, nWidth, 3), (1, nHeight, nWidth, 3), (1, nHeight, nWidth, 3)) # 最小batch，常见batch，最大batch
     config.add_optimization_profile(profile)
 
     trtFile = os.path.join(trtFile_save_dir, trtFile_save_name)
@@ -325,41 +321,49 @@ def zpmc_onnx2trt(onnxFile, trtFile_save_dir, trtFile_save_name, FPMode, video_d
     context = engine.create_execution_context()
     inputs, outputs, bindings, stream = common.allocate_buffers(engine)
     
-    
-    image = Image.open('/root/code/dataset/crop_cell_guide/images/val_v1/image_0000000056_cls_0_6.jpg')
-    image_shape = np.array(np.shape(image)[0:2])
-    image       = cvtColor(image)
-    image_data  = resize_image(image, (input_shape[1], input_shape[0]), False)
-    image_data = np.expand_dims(np.transpose(preprocess_input(np.array(image_data, dtype='float32')), (2, 0, 1)), 0)
-    inputs[0].host = np.ascontiguousarray(image_data, dtype=np.float32)
-    trt_outputs = common.do_inference_v2(context, bindings=bindings, inputs=inputs, outputs=outputs, stream=stream)
+    image = cv2.imread('/root/code/dataset/crop_cell_guide/images/val_v1/image_0000000056_cls_0_6.jpg')
+    image_shape = image.shape[0:2]
+    for iii in range(100):
+        
+        starttime = datetime.datetime.now()  
+        
+        image_data = cv2.resize(image, (input_shape[1], input_shape[0]))
+        image_data = np.expand_dims(image_data, 0)
+        inputs[0].host = np.ascontiguousarray(image_data, dtype=np.float32)
+        trt_outputs = common.do_inference_v2(context, bindings=bindings, inputs=inputs, outputs=outputs, stream=stream)
 
-    trt_outputs_shape = [(batch_size, 2, 128, 128), (batch_size, 2, 128, 128)]
-    heat_map = trt_outputs[0].reshape(trt_outputs_shape[0])
-    p_w_h = trt_outputs[1].reshape(trt_outputs_shape[1])
-    print('heat_map: {}'.format(heat_map.shape))
-    print('p_w_h: {}'.format(p_w_h.shape))
-    
-    outputs = decode_bbox(heat_map, p_w_h, 0.3, False)
-    
-    results = postprocess(outputs, image_shape, input_shape, False, 0.3)
-            
-    #--------------------------------------#
-    #   如果没有检测到物体，则返回原图
-    #--------------------------------------#
-    if results[0] is None:
-        return image
+        trt_outputs_shape = [(batch_size, 2, 128, 128), (batch_size, 2, 128, 128)]
+        heat_map = trt_outputs[1].reshape(trt_outputs_shape[0])
+        p_w_h = trt_outputs[0].reshape(trt_outputs_shape[1])
+        print('heat_map: {}'.format(heat_map.shape))
+        print('p_w_h: {}'.format(p_w_h.shape))
 
-    top_label   = np.array(results[0][:, 3], dtype = 'int32')
-    top_conf    = results[0][:, 2]
-    top_boxes   = results[0][:, :2]
+        outputs_ = decode_bbox(heat_map, p_w_h, 0.3, False)
+        
+        results = postprocess(outputs_, image_shape, input_shape, False, 0.3)
+                
+        #--------------------------------------#
+        #   如果没有检测到物体，则返回原图
+        #--------------------------------------#
+        if results[0] is None:
+            return image
+
+        top_label   = np.array(results[0][:, 3], dtype = 'int32')
+        top_conf    = results[0][:, 2]
+        top_boxes   = results[0][:, :2]
+        endtime = datetime.datetime.now()
+        timediff = (endtime - starttime).total_seconds()
+        print(1/timediff)
+        
 
     #---------------------------------------------------------#
     #   设置字体与边框厚度
     #---------------------------------------------------------#
     font = ImageFont.truetype(font='/root/code/AiEngineering/01-ObjectDetection/CenterNet/code/img/simhei.ttf', size=np.floor(3e-2 * np.shape(image)[1] + 0.5).astype('int32'))
     
-    src = cv2.cvtColor(np.array(image),cv2.COLOR_RGB2BGR) 
+    # src = cv2.cvtColor(image,cv2.COLOR_RGB2BGR) 
+    src = image
+
     for i, c in list(enumerate(top_label)):
         predicted_class = class_names[int(c)]
         box             = top_boxes[i]
@@ -368,8 +372,10 @@ def zpmc_onnx2trt(onnxFile, trtFile_save_dir, trtFile_save_name, FPMode, video_d
         
         x_c     = max(0, np.floor(x_c).astype('int32'))
         y_c    = max(0, np.floor(y_c).astype('int32'))
-        y_c  = min(image.size[1], np.floor(y_c).astype('int32'))
-        x_c   = min(image.size[0], np.floor(x_c).astype('int32'))
+        # y_c  = min(image.size[1], np.floor(y_c).astype('int32'))
+        # x_c   = min(image.size[0], np.floor(x_c).astype('int32'))
+        y_c  = min(image.shape[0], np.floor(y_c).astype('int32'))
+        x_c   = min(image.shape[1], np.floor(x_c).astype('int32'))
 
         label = '{} {:.2f}'.format(predicted_class, score)
         print(label, x_c, y_c)
@@ -457,8 +463,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train Mask R-CNN')
     parser.add_argument('--onnxFile', default='/root/code/AiEngineering/01-ObjectDetection/CenterNet/code/model_data/models.onnx', type=str, help='')
     parser.add_argument('--trtFile_save_dir', default='/root/code/AiEngineering/01-ObjectDetection/CenterNet/code/trt', type=str, help='')
-    parser.add_argument('--trtFile_save_name', default='centernet_keypoints32.trt', type=str, help='')
-    parser.add_argument('--FPMode', default='FP32', type=str, help='')
+    parser.add_argument('--trtFile_save_name', default='centernet_keypoints16.trt', type=str, help='')
+    parser.add_argument('--FPMode', default='FP16', type=str, help='')
     parser.add_argument('--video_dir', default='/root/code/temp_file/firstlanding/', type=str, help='')
     parser.add_argument('--detect_save_dir', default='result', type=str, help='')
     args = parser.parse_args()
