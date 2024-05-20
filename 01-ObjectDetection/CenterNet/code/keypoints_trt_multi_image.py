@@ -317,7 +317,6 @@ def zpmc_onnx2trt(onnxFile, trtFile_save_dir, trtFile_save_name, FPMode, images_
     print('p_w_h: {}'.format(p_w_h.shape))
 
     outputs_ = decode_bbox(heat_map, p_w_h, 0.3, False)
-    
     results = postprocess(outputs_, image_shape, input_shape, False, 0.3)
     endtime = datetime.datetime.now()
     timediff = (endtime - starttime).total_seconds()
