@@ -180,11 +180,11 @@ ZPMC_CORNERLINE_LABEL_MAP = {1:1}
 zpmc_cornerline_segmentation_dataset = dataset_base.copy({
     'name': 'zpmc lockhole seg 2022',
 
-    'train_images': '/root/code/AiEngineering/02-Segmetation/yolact/result_temp/train_crop_images',
-    'valid_images': '/root/code/AiEngineering/02-Segmetation/yolact/result_temp/val_crop_images',
+    'train_images': '/root/code/AiEngineering/02-Segmetation/yolact/result_temp/crop_dataset/crop_train_v1',
+    'valid_images': '/root/code/AiEngineering/02-Segmetation/yolact/result_temp/crop_dataset/crop_val_v1',
     
-    'train_info': '/root/code/AiEngineering/02-Segmetation/yolact/result_temp/ceLL_guide_train_v1_seg.json',
-    'valid_info': '/root/code/AiEngineering/02-Segmetation/yolact/result_temp/ceLL_guide_val_v1_seg.json',
+    'train_info': '/root/code/AiEngineering/02-Segmetation/yolact/result_temp/crop_dataset/crop_train_v1.json',
+    'valid_info': '/root/code/AiEngineering/02-Segmetation/yolact/result_temp/crop_dataset/crop_val_v1.json',
 
     'class_names': ZPMC_CORNERLINE_SEG_CLASSES,
     'label_map': ZPMC_CORNERLINE_LABEL_MAP

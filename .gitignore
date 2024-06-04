@@ -14,3 +14,5 @@
 /02-Segmetation/yolact_trt/onnx
 /02-Segmetation/yolact_trt/trt
 /02-Segmetation/yolact_trt/result
+/02-Segmetation/yolact/mAP/input
+/02-Segmetation/yolact/mAP/output

@@ -119,7 +119,7 @@
         找到line 33：CatIds = sorted(coco.getCatIds(["cell_guide"]))
         这里面可以指定想要裁剪的目标类别
 
-        python crop_cell_guide.py -images_dir 要裁剪数据集存储目录 --ann_dir coco格式的annotation文件存储目录 --ann_name coco格式的annotation文件名称 --label_save_dir 生成裁剪后的数据集存储目录 --label_save_name 生成的annotation文件名称（.json文件，格式同上述的“训练数据格式”）--images_save_name 裁剪后图片的存储文件夹名称 --class_names 类别名称的存储文件（.name文件） --crop_num 每张图片需要裁剪出图片的数量 --crop_w 裁剪出图像的宽度 --crop_h 裁剪出图像的高度
+        python crop_cell_guide.py --images_dir 要裁剪数据集存储目录 --ann_dir coco格式的annotation文件存储目录 --ann_name coco格式的annotation文件名称 --label_save_dir 生成裁剪后的数据集存储目录 --label_save_name 生成的annotation文件名称（.json文件，格式同上述的“训练数据格式”）--images_save_name 裁剪后图片的存储文件夹名称 --class_names 类别名称的存储文件（.name文件） --crop_num 每张图片需要裁剪出图片的数量 --crop_w 裁剪出图像的宽度 --crop_h 裁剪出图像的高度
 
         运行结束后，会在--label_save_dir下生成--images_save_name的图片集、--label_save_name的annotation文件、--class_names的类别名称文件。
 
@@ -203,12 +203,7 @@
     --val_img_dir，测试集的图像存储目录
     ```
 - 评估测试结果
-    
-    ★ 下载[mAP](http://10.128.231.44:7080/yangjianbing/map)
-    ```
-    $ cd 你想存储mAP的目录
-    $ git clone http://10.128.231.44:7080/yangjianbing/map.git
-    ```
+
     ★ 进入mAP目录，并在下面新建**input**文件夹
     ```
     $ cd mAP
