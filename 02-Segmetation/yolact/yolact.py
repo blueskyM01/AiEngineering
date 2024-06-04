@@ -28,6 +28,7 @@ if not use_jit:
     print('Multiple GPUs detected! Turning off JIT.')
 
 ScriptModuleWrapper = torch.jit.ScriptModule if use_jit else nn.Module
+# ScriptModuleWrapper = nn.Module
 script_method_wrapper = torch.jit.script_method if use_jit else lambda fn, _rcn=None: fn
 
 

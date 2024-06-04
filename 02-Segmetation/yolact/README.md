@@ -219,10 +219,26 @@
     $ python main.py
     ```
 ## 四、onnx生成
+- 若你使用的服务器是多卡，则无需修改。若使用的是单卡，则找到文件[yolact.py](yolact.py)，做如下修改：
+    ```
+    1. 注释掉line30 ScriptModuleWrapper = torch.jit.ScriptModule if use_jit else nn.Module
+
+    2. 释放 line31
+
+    3. 注释掉 line322
+
+    ```
+
+- 注意！注意！注意：生成完onnx后，需要再将上面的`修改`改回来
+
 - 指令
     ```
     python zpmc_torch2onnx.py --trained_model weights/yolact_base_45.pth --config yolact_base_config --dataset zpmc_cornerline_segmentation_dataset --image test_images/image_0000002313.jpeg:test_images/image_0000002313-out.jpeg
     ```
+- 如出现如下错误：
+    ![](data/6.png)
+    将文件`/usr/local/lib/python3.8/dist-packages/tensorrt/__init__.py"`, line 166中的`np.bool`改为`bool`
+
 - 会在```onnx```文件夹下生成```yolact.onnx```文件
 
 ## 五、云上训练
