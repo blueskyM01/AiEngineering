@@ -461,19 +461,22 @@ def zpmc_onnx2trt(onnxFile, trtFile_save_dir, trtFile_save_name, FPMode, video_d
             print(timediff, '    ', 1/timediff, '   ', counter)
 
             merge_images = []
-            for nclass, score, box, mask, image in zip(classes, scores, boxes, masks, images):    
-                mask = cv2.resize(mask, (w, h), interpolation=cv2.INTER_LINEAR)
-                mask = np.where(mask > 80, 255, 0).astype(np.uint8)
-                visualize_image = daw_mask(image, mask)
-                for lable, sc, bb in zip(nclass, score, box):
-                    caption = CLASSES[lable+1]
-                    x0 = int(bb[0])
-                    y0 = int(bb[1])
-                    x1 = int(bb[2])
-                    y1 = int(bb[3])
-                    aa = [x0, y0, x1, y1]
-                    visualize_image = draw_caption(visualize_image, aa, caption, sc)  
-                merge_images.append(visualize_image)
+            for nclass, score, box, mask, image in zip(classes, scores, boxes, masks, images):  
+                if mask is not None: 
+                    mask = cv2.resize(mask, (w, h), interpolation=cv2.INTER_LINEAR)
+                    mask = np.where(mask > 80, 255, 0).astype(np.uint8)
+                    visualize_image = daw_mask(image, mask)
+                    for lable, sc, bb in zip(nclass, score, box):
+                        caption = CLASSES[lable+1]
+                        x0 = int(bb[0])
+                        y0 = int(bb[1])
+                        x1 = int(bb[2])
+                        y1 = int(bb[3])
+                        aa = [x0, y0, x1, y1]
+                        visualize_image = draw_caption(visualize_image, aa, caption, sc)  
+                    merge_images.append(visualize_image)
+                else:
+                    merge_images.append(image)
             merge_img = merge_image(merge_images)
             merge_out.write(merge_img)
         else:

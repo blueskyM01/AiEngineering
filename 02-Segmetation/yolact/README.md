@@ -219,7 +219,7 @@
     $ python main.py
     ```
 ## 四、onnx生成
-- 若你使用的服务器是多卡，则无需修改。若使用的是单卡，则找到文件[yolact.py](yolact.py)，做如下修改：
+- 若你使用的服务器是多卡，则无需修改。若使用的是单卡，出现`RuntimeError: Tried to trace <__torch__.yolact.FPN object at 0x69310ca0> but it is not part of the active trace. Modules that are called during a trace must be registered as submodules of the thing being traced.`错误时，找到文件[yolact.py](yolact.py)，做如下修改：
     ```
     1. 注释掉line30 ScriptModuleWrapper = torch.jit.ScriptModule if use_jit else nn.Module
 
@@ -233,7 +233,7 @@
 
 - 指令
     ```
-    python zpmc_torch2onnx.py --trained_model weights/yolact_base_45.pth --config yolact_base_config --dataset zpmc_cornerline_segmentation_dataset --image test_images/image_0000002313.jpeg:test_images/image_0000002313-out.jpeg
+    python zpmc_torch2onnx.py --trained_model weights/yolact_base_9.pth --config yolact_base_config --dataset zpmc_cornerline_segmentation_dataset --image data/image_0000002313.jpeg:data/image_0000002313-out.jpeg
     ```
 - 如出现如下错误：
     ![](data/6.png)
