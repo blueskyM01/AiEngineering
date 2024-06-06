@@ -115,9 +115,9 @@ $ sudo docker run --name zpmc_trt84 -itd -v /software:/software -p 2223:22  -e N
     ```
     $ mkdir onnx
     ```
-- 下载[onnx文件]()
+- 下载[onnx文件](https://pan.baidu.com/s/12GQ7DFkLRU6suWHpxrm99g)，密码1234
 - 将下载到```onnx文件```拷贝到```onnx文件夹```
-- 下载[测试视频]()
+- 下载[测试视频](https://pan.baidu.com/s/12GQ7DFkLRU6suWHpxrm99g)，密码1234
 - 16位推理
     ``` 
     $ python zpmc_yolact_trt.py --onnxFile onnx/yolact.onnx --trtFile_save_dir trt --trtFile_save_name yolact16.trt --FPMode FP16 --video_dir /software/temp/firstlanding_demo --detect_save_dir result
