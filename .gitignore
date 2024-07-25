@@ -12,6 +12,7 @@
 /02-Segmetation/yolact/results
 /02-Segmetation/yolact/yh.py
 /02-Segmetation/yolact_trt/onnx
+/02-Segmetation/yolact_trt/test_video
 /02-Segmetation/yolact_trt/trt
 /02-Segmetation/yolact_trt/result
 /02-Segmetation/yolact/mAP/input

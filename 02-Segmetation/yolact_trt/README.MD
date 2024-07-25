@@ -104,6 +104,7 @@ $ sudo docker run --name zpmc_trt84 -itd -v /software:/software -p 2223:22  -e N
     $ pip --trusted-host pypi.python.org --trusted-host pypi.tuna.tsinghua.edu.cn install pycuda -i https://pypi.tuna.tsinghua.edu.cn/simple/
 
     若报src/cpp/cuda.hpp:14:10: fatal error: cuda.h: No such file or directory错误，解决方法：在~/.bashrc中添加export PATH=/usr/local/cuda-11.6/bin:$PATH。添加完成后，记得source ~/.bashrc
+    若出现：ERROR: No matching distribution found for numpy>=2.0 报错，解决方法：pip install pycuda==2022.2
     ```
 - 安装opencv-python， 指令如下：
     ```

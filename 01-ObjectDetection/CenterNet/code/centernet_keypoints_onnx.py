@@ -457,7 +457,7 @@ class CenterNet(object):
         #-----------------------------------------------------------#
         # image_data = np.expand_dims(np.transpose(np.array(image_data, dtype='float32'), (2, 0, 1)), 0)
         image_data = np.expand_dims(image_data, 0)
-        image_data = np.repeat(image_data,[12], axis=0)
+        image_data = np.repeat(image_data,[8], axis=0)
         with torch.no_grad():
             images = torch.from_numpy(np.asarray(image_data)).type(torch.FloatTensor)
             if self.cuda:
