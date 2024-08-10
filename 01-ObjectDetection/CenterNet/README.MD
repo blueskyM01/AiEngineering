@@ -155,8 +155,17 @@
 #### 4.2.3 Estimation
 
 #### 4.2.4 convert to onnx
+- cd code
+- python detection_onnx.py --video_image_path ./img/aviation.jpg (需要推理的图片)
+- 程序执行完成后，会在`01-ObjectDetection/CenterNet/code/model_data`下生成`detection_models.onnx`文件
+- 需修改模型文件路径与类别文件路径，修改[centernet_detection_onnx.py](code/centernet_detection_onnx.py), line 33，34处
+- 需要指定batch_size,修改[centernet_detection_onnx.py](code/centernet_detection_onnx.py), line 425处
 
 #### 4.2.5 onnx convert to trt
+- 单帧预测（batch size = 1）
+    - cd code
+    - python detection_trt.py --onnxFile onnx 文件路径 --trtFile_save_dir 生成的trt文件存储目录 --trtFile_save_name 生成的trt文件存储名称 --FPMode FP32或FP16 （保存浮点数32位或16位）--images_dir 要预测图片的目录 --detect_save_dir 预测结果存储的目录 --class_file 类别标签（.txt）
+    - 例：python detection_trt.py --onnxFile 01-ObjectDetection/CenterNet/code/model_data/detection_models.onnx --trtFile_save_dir 01-ObjectDetection/CenterNet/code/trt --trtFile_save_name centernet_detections16.trt --FPMode FP16 --images_dir /xxx/xxx --detect_save_dir xxx/results --class_file xxx/xxx.txt
 
 ### 4.3 Keypoint detection (x86)
 #### 4.3.1 Train 

@@ -4,6 +4,9 @@
 /01-ObjectDetection/CenterNet/code/model_data
 /01-ObjectDetection/CenterNet/code/trt
 /01-ObjectDetection/CenterNet/code/yh.py
+/01-ObjectDetection/CenterNet/code/img_out
+/01-ObjectDetection/CenterNet/code/.temp_map_out
+/01-ObjectDetection/CenterNet/code/__pycache__
 /02-Segmetation/yolact/result_temp
 /02-Segmetation/yolact/logs
 /02-Segmetation/yolact/__pycache__

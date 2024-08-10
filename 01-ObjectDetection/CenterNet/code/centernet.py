@@ -30,8 +30,8 @@ class CenterNet(object):
         #   验证集损失较低不代表mAP较高，仅代表该权值在验证集上泛化性能较好。
         #   如果出现shape不匹配，同时要注意训练时的model_path和classes_path参数的修改
         #--------------------------------------------------------------------------#
-        "model_path"        : '/root/code/AI-Note-Demo/01-ObjectDetection/CenterNet/code/logs/best_epoch_weights.pth',
-        "classes_path"      : '/root/code/AI-Note-Demo/01-ObjectDetection/CenterNet/code/img_out/coco_classes.txt',
+        "model_path"        : '/root/code/AiEngineering/01-ObjectDetection/CenterNet/code/logs/ep220-loss0.988-val_loss0.931.pth',
+        "classes_path"      : '/root/code/dataset/610/dataset_610_v1/dataset_610_v1/class.txt',
         #--------------------------------------------------------------------------#
         #   用于选择所使用的模型的主干
         #   resnet50, hourglass
