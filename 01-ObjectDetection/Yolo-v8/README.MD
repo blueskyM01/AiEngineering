@@ -121,10 +121,10 @@
     - 训练:`python train.py`
 
 #### 4.2.2 预测
-    - 修改[yolo.py](code/yolo.py)文件中的`phi`（line 42）参数，改成与训练时对应的模型
-    - 修改[yolo.py](code/yolo.py)文件中的`model_path`(line 28)：权重路径
-    - 修改[yolo.py](code/yolo.py)文件中的`classes_path`(line 29)：类别路径
-    - 预测：`python predict.py`，然后输入需要预测的图片路径，最后会在`logs`文件夹下生成`output_image.png`图片
+- 修改[yolo.py](code/yolo.py)文件中的`phi`（line 42）参数，改成与训练时对应的模型
+- 修改[yolo.py](code/yolo.py)文件中的`model_path`(line 28)：权重路径
+- 修改[yolo.py](code/yolo.py)文件中的`classes_path`(line 29)：类别路径
+- 预测：`python predict.py`，然后输入需要预测的图片路径，最后会在`logs`文件夹下生成`output_image.png`图片
 
 #### 4.2.3 Estimation
 
