@@ -7,6 +7,11 @@
 /01-ObjectDetection/CenterNet/code/img_out
 /01-ObjectDetection/CenterNet/code/.temp_map_out
 /01-ObjectDetection/CenterNet/code/__pycache__
+/01-ObjectDetection/Yolo-v8/code/datas
+/01-ObjectDetection/Yolo-v8/code/model_data
+/01-ObjectDetection/Yolo-v8/code/logs
+/01-ObjectDetection/Yolo-v8/code/trt
+/01-ObjectDetection/Yolo-v8/code/__pycache__
 /02-Segmetation/yolact/result_temp
 /02-Segmetation/yolact/logs
 /02-Segmetation/yolact/__pycache__

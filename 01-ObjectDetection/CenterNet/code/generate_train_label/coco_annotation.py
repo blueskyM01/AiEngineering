@@ -3,20 +3,6 @@ import numpy as np
 import cv2, os, argparse
 from collections import defaultdict
 
-'''
-功能： Generate train.txt/val.txt/test.txt files One line for one image, in the format like：
-      image_index, image_absolute_path, img_width, img_height, cat1, box_1, cat2, box_2, ... catn, box_n.
-      Box_x format: label_index x_min y_min x_max y_max.
-                    (The origin of coordinates is at the left top corner, left top => (xmin, ymin), right bottom => (xmax, ymax).)
-      image_index: is the line index which starts from zero.
-      label_index: is in range [0, class_num - 1].
-      For example:
-      0 xxx/xxx/a.jpg 1920 1080 0 453 369 473 391 1 588 245 608 268
-      1 xxx/xxx/b.jpg 1920 1080 1 466 403 485 422 2 793 300 809 320
-'''
-
-
-
 class zpmc_GenerateTrainLabel:
     def __init__(self, ann_dir, ann_name, label_save_dir, label_save_name, class_names, images_dir):
         self.ann_dir = ann_dir
