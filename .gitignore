@@ -26,3 +26,9 @@
 /02-Segmetation/yolact/mAP/input
 /02-Segmetation/yolact/mAP/output
 /02-Segmetation/yolact/onnx
+/02-Segmetation/Yolo-v8/pre_trained_weights
+/02-Segmetation/Yolo-v8/results
+/02-Segmetation/Yolo-v8/datas
+/02-Segmetation/Yolo-v8/runs
+/02-Segmetation/Yolo-v8/yolov8n.pt
+/02-Segmetation/Yolo-v8/__pycache__

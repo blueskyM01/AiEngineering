@@ -130,12 +130,12 @@
 
 
 #### 4.2.4 convert to onnx
-- 环境配置参考[这里](../../02-Segmetation/yolact_trt/README.MD)
 - cd code
 - 修改[yolo_detection_onnx.py](code/yolo_detection_onnx.py)中的`model_path`(line 28), `classes_path`(line 29)参数,改成与网络对应的模型权重与类别
 - `python detection_onnx.py`，会在`model_data`文件夹下生成`yolo_detection_models.onnx`
 
 #### 4.2.5 onnx convert to trt
+- 环境配置参考[这里](../../02-Segmetation/yolact_trt/README.MD)
 - 单帧预测（batch size = 1）
 - `cd code`
 - `python detection_trt.py --onnxFile onnx 文件路径 --trtFile_save_dir 生成的trt文件存储目录 --trtFile_save_name 生成的trt文件存储名称 --FPMode FP32或FP16 （保存浮点数32位或16位）--images_dir 要预测图片的目录 --detect_save_dir 预测结果存储的目录 --class_file 类别标签（.txt）`
