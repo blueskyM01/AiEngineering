@@ -16,3 +16,7 @@ models/post_processing/pse/build
 models/post_processing/pse/*.so
 models/utils/__pycache__
 utils/__pycache__
+onnx
+trt
+result
+results

@@ -148,8 +148,28 @@ $ python zpmc_eval.py --checkpoint checkpoints/checkpoint_epoch_0.pth.tar --img_
     $ python main.py
     ```
 ## 六、covert to onnx
+- 找到`models/psenet.py`，将line87处的`# return det_out`取消注释（注意：导出onnx文件后，一定要把这一行再注释掉，否则`推理`和`精度评估`时会报错）
+- `python zpmc_onnx.py --config config/psenet/psenet_r50_ctw.py --checkpoint checkpoints/checkpoint_epoch_0.pth.tar --report_speed False --input_image_path /root/code/dataset/containercode/images/val/image_0000002754.jpg`
+    - --config(配置文件): config/psenet/psenet_r50_ctw.py
+    - --checkpoint（训练出的模型）
+    - --report_speed：必须设置成False
+    - --input_image_path（预测图片的路径）
+- 生成的`psenet.onnx`文件保存在`onnx文件夹`下
 
 ## 七、trt
+- [环境配置](../../02-Segmetation/yolact_trt/README.MD)
+    - 将`models`文件夹下的`post_processing`文件夹，拷贝(编译好了再拷贝，若trt运行的python版本跟编译时的环境不一样，则需要再trt环境下重新编译)
+    - 找到`zpmc_trt.py`，line13处，这里导入的`post_processing`包就是上面拷贝的`post_processing`。（直接拷贝`post_processing`文件夹的话，导入包时去掉前面的`models.`）
+- `cd 03-OCR/psenet`
+- `python zpmc_trt.py --onnxFile onnx/psenet.onnx --trtFile_save_dir trt --trtFile_save_name psenet16.trt --FPMode FP16 --images_dir /root/code/dataset/containercode/images/val --detect_save_dir result`
+    - --onnxFile: 导出的onnx文件存储路径
+    - --trtFile_save_dir：编译生成的trt文件的存储目录
+    - --trtFile_save_name：编译生成的trt文件的名称
+    - --FPMode：精度（FP32，FP16）
+    - --images_dir：待预测图片存储的目录
+    - --detect_save_dir：预测结果存储的目录
+
+
 
 ## 八、云上训练
 - 增加两个入口参数```data_dir```、```train_dir```

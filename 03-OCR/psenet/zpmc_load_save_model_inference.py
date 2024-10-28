@@ -137,7 +137,7 @@ def main(args):
         
         contours.append(np.array(contour))
     cv2.drawContours(img_org, contours, -1, color=(255,0,0), thickness=2)
-    cv2.imwrite('./1q.jpg', img_org)    
+    cv2.imwrite('./data/1q.jpg', img_org)    
 
 
 if __name__ == '__main__':

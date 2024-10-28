@@ -35,50 +35,58 @@ class PSENet(nn.Module):
                 cfg=None):
         outputs = dict()
 
-        if not self.training and cfg.report_speed: #false
-            torch.cuda.synchronize()
-            start = time.time()
+        if gt_texts!=None and gt_kernels!=None and training_masks!=None:
+            if not self.training and cfg.report_speed: #false
+                torch.cuda.synchronize()
+                start = time.time()
 
         # backbone
         # f: P2, P3, P4, P5
         f = self.backbone(imgs)
-        if not self.training and cfg.report_speed: #false
-            torch.cuda.synchronize()
-            outputs.update(dict(
-                backbone_time=time.time() - start
-            ))
-            start = time.time()
+        
+        if gt_texts!=None and gt_kernels!=None and training_masks!=None:
+            if not self.training and cfg.report_speed: #false
+                torch.cuda.synchronize()
+                outputs.update(dict(
+                    backbone_time=time.time() - start
+                ))
+                start = time.time()
 
         # FPN
         f1, f2, f3, f4, = self.fpn(f[0], f[1], f[2], f[3])
 
         f = torch.cat((f1, f2, f3, f4), 1)
-
-        if not self.training and cfg.report_speed: #false
-            torch.cuda.synchronize()
-            outputs.update(dict(
-                neck_time=time.time() - start
-            ))
-            start = time.time()
+        
+        if gt_texts!=None and gt_kernels!=None and training_masks!=None:
+            if not self.training and cfg.report_speed: #false
+                torch.cuda.synchronize()
+                outputs.update(dict(
+                    neck_time=time.time() - start
+                ))
+                start = time.time()
 
         # detection
         # 7个kernel对应的output
         det_out = self.det_head(f)
 
-        if not self.training and cfg.report_speed:  #false
-            torch.cuda.synchronize()
-            outputs.update(dict(
-                det_head_time=time.time() - start
-            ))
+        if gt_texts!=None and gt_kernels!=None and training_masks!=None:
+            if not self.training and cfg.report_speed:  #false
+                torch.cuda.synchronize()
+                outputs.update(dict(
+                    det_head_time=time.time() - start
+                ))
 
         if self.training:
             # 放大到与输入图像同尺寸， [736, 736]
             det_out = self._upsample(det_out, imgs.size())
             det_loss = self.det_head.loss(det_out, gt_texts, gt_kernels, training_masks)
             outputs.update(det_loss)
+            return outputs
         else:
             det_out = self._upsample(det_out, imgs.size(), 1)
+            # return det_out
             det_res = self.det_head.get_results(det_out, img_metas, cfg)
             outputs.update(det_res)
+            return outputs
 
-        return outputs
+        

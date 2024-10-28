@@ -92,7 +92,7 @@ def main(args):
     model.eval()
 
     # 读取图像
-    image_name = '/root/code/dataset/containercode/images/val/image_0000002754.jpg'
+    image_name = args.input_image_path
     img_org = cv2.imread(image_name)
     img = img_org[:, :, [2, 1, 0]]
 
@@ -120,24 +120,34 @@ def main(args):
         cfg=cfg
     ))
 
-    with torch.no_grad():
-        outputs = model(**data)
-
+    # with torch.no_grad():
+    #     outputs = model(**data)
     
-    bboxes = outputs['bboxes']
-    scores = outputs['scores']
-    contours = []
-    for score, bbox in zip(scores, bboxes):
-        contour = []
-        for i in range(0, len(bbox), 2):
-            point = [int(bbox[i]), int(bbox[i+1])]
-            contour.append(point)
+    with torch.no_grad():
+        outputs = model(imgs=data['imgs'],
+                        gt_texts=None,
+                        gt_kernels=None,
+                        training_masks=None,
+                        img_metas=data['img_metas'],
+                        cfg=None)
+    if not os.path.exists('onnx'):
+        os.mkdir('onnx')
+    torch.onnx.export(model, (data['imgs'],None,None, None, None, None), 'onnx/psenet.onnx', verbose=True, opset_version=14, dynamic_axes = {'onnx::Transpose_0':[0]})
+    
+    # bboxes = outputs['bboxes']
+    # scores = outputs['scores']
+    # contours = []
+    # for score, bbox in zip(scores, bboxes):
+    #     contour = []
+    #     for i in range(0, len(bbox), 2):
+    #         point = [int(bbox[i]), int(bbox[i+1])]
+    #         contour.append(point)
 
-        cv2.putText(img_org, str(score), (int(bbox[0]), int(bbox[1])-5), font, 2, (255, 255, 255), 4)
+    #     cv2.putText(img_org, str(score), (int(bbox[0]), int(bbox[1])-5), font, 2, (255, 255, 255), 4)
         
-        contours.append(np.array(contour))
-    cv2.drawContours(img_org, contours, -1, color=(255,0,0), thickness=2)
-    cv2.imwrite('./data/1q.jpg', img_org)    
+    #     contours.append(np.array(contour))
+    # cv2.drawContours(img_org, contours, -1, color=(255,0,0), thickness=2)
+    # cv2.imwrite('./data/1q.jpg', img_org)    
 
 
 if __name__ == '__main__':
@@ -145,6 +155,7 @@ if __name__ == '__main__':
     parser.add_argument('--config', help='', type=str, default='config/psenet/psenet_r50_ctw.py')
     parser.add_argument('--checkpoint', nargs='?', type=str, default='checkpoints/checkpoint_epoch_0.pth.tar')
     parser.add_argument('--report_speed', type=bool, default=False)
+    parser.add_argument('--input_image_path', help='', type=str, default='/root/code/dataset/containercode/images/val/image_0000002754.jpg')
     args = parser.parse_args()
 
     main(args)
