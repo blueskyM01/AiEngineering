@@ -1,8 +1,17 @@
 ## 一、Environment setup (x86)
+### 1.1 直接下载配置好的docker image
+- 下载[trocr-train.tar](https://pan.baidu.com/s/19XZRPTYUtQlGITCewEDcOA), 提取码: 1234 
+- 载入镜像
+    `sudo docker load -i xxx/trocr-train.tar`
+- 启动镜像
+    `$ sudo docker run --name trocr -itd  -v /home/ntueee/yangjianbing:/root/code -p 2019:22 -e NVIDIA_DRIVER_CAPABILITIES=compute,utility --gpus all --shm-size="12g" --restart=always nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04-torch-1.13.0:trocr`
+
+
+### 1.2 自己配
 - Docker pull
     - ` $ sudo docker pull nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04`
 - 启动镜像
-    - `$ sudo docker run --name psenet -itd  -v /home/ntueee/yangjianbing:/root/code -p 2016:22 -e NVIDIA_DRIVER_CAPABILITIES=compute,utility --gpus all --shm-size="12g" --restart=always nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04`
+    - `$ sudo docker run --name trocr -itd  -v /home/ntueee/yangjianbing:/root/code -p 2019:22 -e NVIDIA_DRIVER_CAPABILITIES=compute,utility --gpus all --shm-size="12g" --restart=always nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04`
 - Install ssh (Note that enter container first!)
     - `$ apt-get update`
     - `$ apt-get install vim`
@@ -121,7 +130,7 @@
 ## 三、预训练模型trocr模型权重
 - [下载:hand-write.zip](https://pan.baidu.com/s/1jz_FuqamlNNs7KxGRQ9FYQ), 提取码: 1234 
 
-- 解压`hand-write.zip`，得到如下文件：
+- 解压`hand-write.zip`，得到如下文件：  
     ![](./img/fig3.png)
 
 - 在`trocr`新建`weights`文件夹
@@ -153,7 +162,7 @@
     ```
 
 - 训练时，程序会将训练的数据分成train set和test set, [train.py](train.py), line55处。若报train set和test set划分的错误，修改line55处的test_size参数
-- 会在`--checkpoint_path`路径下生成如下所示的权重
+- 会在`--checkpoint_path`路径下生成如下所示的权重  
     ![](./img/fig5.png)
 
 ## 五、评估
@@ -182,11 +191,13 @@
     python app.py --cust_data_init_weights_path ./cust-data/weights --test_img img/fig1.jpg    
     ```
 
-## 七、转onnx
-- [环境配置](../../02-Segmetation/yolact_trt/README.MD)
-- 在上面的环境下，安装optimum[exporters]
-    `pip install optimum[exporters]`
-    - 
+## 七、转onnx    
+
+- 安装`optimum[exporters]`  
+    - `pip install transformers==4.46.3`
+    - 注意：onnx转换完成后，一定要重新安装transformers==4.15.0，否则训练的时候会报错。因为optimum[exporters]与transformers==4.15.0版本冲突，重新安装transformers==4.15.0的指令如下：
+        - `pip install transformers==4.15.0`
+
 - 将`--checkpoint_path`路径下生成的权重中的`pytorch_model.bin`拷贝到`第三节`所述的`--cust_data_init_weights_path`路径下
     - 例：  
         ```
@@ -203,7 +214,7 @@
         --model：“第三节”所述的“--cust_data_init_weights_path”路径
         会在trocr生成一个onnx文件夹，里面存储这相关的onnx文件
         ```
-    - onnx文件夹下的内容如下图所示
+    - onnx文件夹下的内容如下图所示  
         ![](./img/fig6.png)
 - 推理onnx文件
     ```
@@ -216,6 +227,13 @@
     ```
 
 ## 八、onnx转trt
+### 8.1 直接下载配置好的docker image
+- 下载[nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04-trt8.4.tar](https://pan.baidu.com/s/1g8aaeT0655qvW9mj5UcpWg), 提取码: 1234 
+- 载入镜像
+    `sudo docker load -i xxx/ubuntu20-04-trt84.tar`
+- 启动镜像
+    `$ sudo docker run --name trocr-trt -itd  -v /home/ntueee/yangjianbing:/root/code -p 3019:22 -e NVIDIA_DRIVER_CAPABILITIES=compute,utility --gpus all --shm-size="12g" --restart=always nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04:trt8.4`
+### 8.2 自己配
 - [环境配置](../../02-Segmetation/yolact_trt/README.MD)
 - 运行指令
     ```
@@ -236,7 +254,7 @@
     注意：FP16的推理现在有些问题，还没有做优化
     ```
 
-- 会在`--detect_save_dir`路径下保存预测结果，例：
+- 会在`--detect_save_dir`路径下保存预测结果，例：  
     ![](./img/fig7.jpg)
 
 

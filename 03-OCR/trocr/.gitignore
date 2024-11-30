@@ -34,3 +34,4 @@ onnx
 cust-data/vocab.txt
 trt
 result
+evaluation_results.log
