@@ -1,0 +1,7 @@
+datasets==1.18.4
+transformers==4.15.0
+scikit-learn
+jiwer==2.3.0
+python-Levenshtein==0.12.2
+opencv-python-headless
+
