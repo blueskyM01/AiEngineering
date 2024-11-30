@@ -229,10 +229,10 @@
 ## 八、onnx转trt
 ### 8.1 直接下载配置好的docker image
 - 下载[nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04-trt8.4.tar](https://pan.baidu.com/s/1g8aaeT0655qvW9mj5UcpWg), 提取码: 1234 
-- 载入镜像
-    `sudo docker load -i xxx/ubuntu20-04-trt84.tar`
-- 启动镜像
-    `$ sudo docker run --name trocr-trt -itd  -v /home/ntueee/yangjianbing:/root/code -p 3019:22 -e NVIDIA_DRIVER_CAPABILITIES=compute,utility --gpus all --shm-size="12g" --restart=always nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04:trt8.4`
+- 载入镜像   
+    `sudo docker load -i xxx/nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04-trt8.4.tar`
+- 启动镜像   
+    `sudo docker run --name trocr-trt -itd  -v /home/ntueee/yangjianbing:/root/code -p 3019:22 -e NVIDIA_DRIVER_CAPABILITIES=compute,utility --gpus all --shm-size="12g" --restart=always nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04:trt8.4`
 ### 8.2 自己配
 - [环境配置](../../02-Segmetation/yolact_trt/README.MD)
 - 运行指令
