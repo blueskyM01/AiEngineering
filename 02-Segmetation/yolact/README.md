@@ -1,9 +1,18 @@
 # zpmc_yolact
 ## Environment setup (x86)
+### 1.1 直接下载配置好的docker image
+- 下载[yolact-train.tar](https://pan.baidu.com/s/1tUJqGQJQV13nZa11ynQC0Q), 提取码: 1234 
+- 载入镜像
+    `sudo docker load -i xxx/yolact-train.tar`
+- 启动镜像
+    `$ sudo docker run --name yolact -itd  -v /home/ntueee/yangjianbing:/root/code -p 2011:22 -e NVIDIA_DRIVER_CAPABILITIES=compute,utility --gpus all --shm-size="12g" --restart=always nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04-torch-1.13.0:yolact`
+
+
+### 1.2 自己配
 - Docker pull
     - ` $ sudo docker pull nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04`
 - 启动镜像
-    - `$ sudo docker run --name yoloact -itd -v /home/ntueee/yangjianbing:/root/code -p 2003:22 -e NVIDIA_DRIVER_CAPABILITIES=compute,utility --gpus all --shm-size="12g" --restart=always nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04`
+    - `$ sudo docker run --name yoloact -itd -v /home/ntueee/yangjianbing:/root/code -p 2011:22 -e NVIDIA_DRIVER_CAPABILITIES=compute,utility --gpus all --shm-size="12g" --restart=always nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04`
 - Install ssh (Note that enter container first!)
     - `$ apt-get update`
     - `$ apt-get install vim`
@@ -233,6 +242,7 @@
 
 - 指令
     ```
+    mkdir onnx
     python zpmc_torch2onnx.py --trained_model weights/yolact_base_9.pth --config yolact_base_config --dataset zpmc_cornerline_segmentation_dataset --image data/image_0000002313.jpeg:data/image_0000002313-out.jpeg
     ```
 - 如出现如下错误：

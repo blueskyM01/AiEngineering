@@ -1,13 +1,10 @@
 # zpmc_yolact_trt
 若使用已配置好的镜像，则跳过第“一、环境安装”，拉取启动镜像指令如下：
-- 拉取镜像
-```
-$ sudo docker pull 10.128.231.44/tensorrt/tensorrt8.4.1.5-ros-anaconda-base-cuda-11.6.0-cudnn8-devel-ubuntu20.04:v1.1
-```
-- 启动镜像
-```
-$ sudo docker run --name zpmc_trt84 -itd -v /software:/software -p 2223:22  -e NVIDIA_DRIVER_CAPABILITIES=compute,utility --gpus all --shm-size="12g" --restart=always 10.128.231.44/tensorrt/tensorrt8.4.1.5-ros-anaconda-base-cuda-11.6.0-cudnn8-devel-ubuntu20.04:v1.1
-```
+- 下载[nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04-trt8.4.tar](https://pan.baidu.com/s/1g8aaeT0655qvW9mj5UcpWg), 提取码: 1234 
+- 载入镜像   
+    `sudo docker load -i xxx/nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04-trt8.4.tar`
+- 启动镜像   
+    `sudo docker run --name yolact-trt -itd  -v /home/ntueee/yangjianbing:/root/code -p 3011:22 -e NVIDIA_DRIVER_CAPABILITIES=compute,utility --gpus all --shm-size="12g" --restart=always nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04:trt8.4`
 
 ## Environment setup (x86)
 - Docker pull
