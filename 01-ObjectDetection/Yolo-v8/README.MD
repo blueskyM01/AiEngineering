@@ -1,9 +1,4 @@
-#  [Yolo-V8]()
-
-![](./Figure/overview.png)
-
-
-[参考文档]()
+#  [Yolo-V8-Detection](https://github.com/bubbliiiing/yolov8-pytorch)
 
 ## 1. Network
 
@@ -11,12 +6,19 @@
 
 ## 3 Annotation
 
-## 4 [Code，参考的这个](https://github.com/bubbliiiing/yolov8-pytorch)
-### 4.1 Environment setup (x86)
+
+## 4 Environment setup (x86)
+### 4.1 直接下载配置好的docker image
+- 下载[yolo-v8-train.tar](https://pan.baidu.com/s/1H3pnld8gyJU-P3BJetDZgw), 提取码: 1234 
+- 载入镜像
+    `sudo docker load -i xxx/yolo-v8-train.tar`
+- 启动镜像
+    `$ sudo docker run --name yolo-v8 -itd  -v /home/ntueee/yangjianbing:/root/code -p 2012:22 -e NVIDIA_DRIVER_CAPABILITIES=compute,utility --gpus all --shm-size="12g" --restart=always nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04-torch-1.13.0:yolo-v8`
+### 4.1.1 自己配
 - Docker pull
     - ` $ sudo docker pull nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04`
 - 启动镜像
-    - `$ sudo docker run --name yolo-v8 -itd  -v /home/ntueee/yangjianbing:/root/code -p 2014:22   -e NVIDIA_DRIVER_CAPABILITIES=compute,utility --gpus all --shm-size="12g" --restart=always nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04`
+    - `$ sudo docker run --name yolo-v8 -itd  -v /home/ntueee/yangjianbing:/root/code -p 2012:22 -e NVIDIA_DRIVER_CAPABILITIES=compute,utility --gpus all --shm-size="12g" --restart=always nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04`
 - Install ssh (Note that enter container first!)
     - `$ apt-get update`
     - `$ apt-get install vim`
@@ -68,8 +70,8 @@
     - apt-get install -y libxrender-dev
     - pip install -r requirements.txt
 
-### 4.2 Object Detection
-#### 4.2.1 Train
+
+### 4.2 Train
 - 制作训练标签 (.txt file)
     ```
     1、训练标签
@@ -120,25 +122,33 @@
         - 验证标签：line 250 `val_annotation_path` (.txt)
     - 训练:`python train.py`
 
-#### 4.2.2 预测
+### 4.3 预测
 - 修改[yolo.py](code/yolo.py)文件中的`phi`（line 42）参数，改成与训练时对应的模型
 - 修改[yolo.py](code/yolo.py)文件中的`model_path`(line 28)：权重路径
 - 修改[yolo.py](code/yolo.py)文件中的`classes_path`(line 29)：类别路径
 - 预测：`python predict.py`，然后输入需要预测的图片路径，最后会在`logs`文件夹下生成`output_image.png`图片
 
-#### 4.2.3 Estimation
+### 4.4 Estimation
 
 
-#### 4.2.4 convert to onnx
+### 4.5 convert to onnx
 - cd code
 - 修改[yolo_detection_onnx.py](code/yolo_detection_onnx.py)中的`model_path`(line 28), `classes_path`(line 29)参数,改成与网络对应的模型权重与类别
 - `python detection_onnx.py`，会在`model_data`文件夹下生成`yolo_detection_models.onnx`
 
-#### 4.2.5 onnx convert to trt
+### 4.6 onnx convert to trt
+#### 4.6.1 直接下载配置好的docker image
+- 下载[nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04-trt8.4.tar](https://pan.baidu.com/s/1g8aaeT0655qvW9mj5UcpWg), 提取码: 1234 
+- 载入镜像   
+    `sudo docker load -i xxx/nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04-trt8.4.tar`
+- 启动镜像   
+    `sudo docker run --name yolov8-trt -itd  -v /home/ntueee/yangjianbing:/root/code -p 3012:22 -e NVIDIA_DRIVER_CAPABILITIES=compute,utility --gpus all --shm-size="12g" --restart=always nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04:trt8.4`
+#### 4.6.2 自己配
 - 环境配置参考[这里](../../02-Segmetation/yolact_trt/README.MD)
+- 注意：不同的训练模型（种类的数量不同），trt的输出维度会有变化，需要自己根据实际情况调整。这个示例代码`只适用于4分类`。
 - 单帧预测（batch size = 1）
 - `cd code`
-- `python detection_trt.py --onnxFile onnx 文件路径 --trtFile_save_dir 生成的trt文件存储目录 --trtFile_save_name 生成的trt文件存储名称 --FPMode FP32或FP16 （保存浮点数32位或16位）--images_dir 要预测图片的目录 --detect_save_dir 预测结果存储的目录 --class_file 类别标签（.txt）`
+- `python detection_trt.py --onnxFile 文件路径 --trtFile_save_dir 生成的trt文件存储目录 --trtFile_save_name 生成的trt文件存储名称 --FPMode FP32或FP16 （保存浮点数32位或16位）--images_dir 要预测图片的目录 --detect_save_dir 预测结果存储的目录 --class_file 类别标签（.txt）`
 
 
 

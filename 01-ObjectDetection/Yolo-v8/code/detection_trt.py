@@ -317,20 +317,14 @@ def zpmc_onnx2trt(onnxFile, trtFile_save_dir, trtFile_save_name, FPMode, images_
         inputs[0].host = np.ascontiguousarray(image_data, dtype=np.float32)
         trt_outputs = common.do_inference_v2(context, bindings=bindings, inputs=inputs, outputs=outputs, stream=stream)
 
-        trt_outputs_shape = [(batch_size, 4, 8400), 
-                             (batch_size, 4, 8400), 
-                             (batch_size, 68, 80, 80),
-                             (batch_size, 68, 40, 40),
-                             (batch_size, 68, 20, 20),
-                             (2, 8400),
-                             (1, 8400)]
-        P3_ = trt_outputs[0].reshape(trt_outputs_shape[2]) # (batch_size, 68, 80, 80)
-        P4_ = trt_outputs[1].reshape(trt_outputs_shape[3]) # (batch_size, 68, 40, 40)
-        P5_ = trt_outputs[2].reshape(trt_outputs_shape[4]) # (batch_size, 68, 20, 20)
-        classes = trt_outputs[3].reshape(trt_outputs_shape[0])
-        dbox = trt_outputs[4].reshape(trt_outputs_shape[1])
-        anchors = trt_outputs[5].reshape(trt_outputs_shape[5])
-        strides = trt_outputs[6].reshape(trt_outputs_shape[6])
+
+        P3_ = trt_outputs[0].reshape(outputTensor2.shape) # (batch_size, x, 80, 80)
+        P4_ = trt_outputs[1].reshape(outputTensor3.shape) # (batch_size, x, 40, 40)
+        P5_ = trt_outputs[2].reshape(outputTensor4.shape) # (batch_size, x, 20, 20)
+        classes = trt_outputs[3].reshape(outputTensor1.shape)
+        dbox = trt_outputs[4].reshape(outputTensor0.shape)
+        anchors = trt_outputs[5].reshape(outputTensor5.shape)
+        strides = trt_outputs[6].reshape(outputTensor6.shape)
         # print('dbox: {}'.format(dbox.shape))
         # print('classes: {}'.format(classes.shape))
         # print('P3: {}'.format(P3_.shape))
@@ -369,7 +363,7 @@ def zpmc_onnx2trt(onnxFile, trtFile_save_dir, trtFile_save_name, FPMode, images_
             
             cv2.rectangle(src, (int(left), int(top)), (int(right), int(bottom)), colors[int(c)], 2)
         cv2.imwrite(os.path.join(detect_save_dir, 'trt_'+image_name.split('/')[-1]), src)
-            # print('/root/code/AiEngineering/01-ObjectDetection/CenterNet/code/img_out/trt_'+image_name.split('/')[-1])
+        print('write ', 'trt_'+image_name.split('/')[-1])
     
 
 if __name__ == "__main__":

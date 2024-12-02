@@ -21,7 +21,7 @@ class zpmc_GenerateTrainLabel:
         coco = COCO(annFile)
 
         # display COCO categories and supercategories
-        CatIds = sorted(coco.getCatIds())  # 获得满足给定过滤条件的category的id
+        CatIds = sorted(coco.getCatIds(["spreader"]))  # 获得满足给定过滤条件的category的id
 
         # 使用指定的id加载category
         cats = coco.loadCats(CatIds)
@@ -70,7 +70,7 @@ class zpmc_GenerateTrainLabel:
 
             # coco中每个标注实例都对应一个id，如果一张图像中有多个实例，也就有多个ann
             # annIds = [id1, id2, ....]
-            annIds = coco.getAnnIds(imgIds=img['id'])
+            annIds = coco.getAnnIds(imgIds=img['id'], catIds=CatIds)
 
             # 使用给定的annIds加载annotation
             # anns = [{}, {}], {} = {'id': 5, 'image_id': 5, 'category_id': 1, 'segmentation': [], 'area': 109903.41049999993,
