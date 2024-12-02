@@ -5,3 +5,4 @@ pyclipper
 opencv-python-headless
 Cython
 scipy
+matplotlib

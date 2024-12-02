@@ -1,4 +1,13 @@
 ## 一、Environment setup (x86)
+### 1.1 直接下载配置好的docker image
+- 下载[psenet-train.tar](https://pan.baidu.com/s/1FHp2vUKKrKuNMtcB5qb0Jw), 提取码: 1234 
+- 载入镜像
+    `sudo docker load -i xxx/psenet-train.tar`
+- 启动镜像
+    `$ sudo docker run --name psenet -itd  -v /home/ntueee/yangjianbing:/root/code -p 2016:22 -e NVIDIA_DRIVER_CAPABILITIES=compute,utility --gpus all --shm-size="12g" --restart=always nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04-torch-1.13.0:psenet`
+
+
+### 1.2 自己配
 - Docker pull
     - ` $ sudo docker pull nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04`
 - 启动镜像
@@ -54,29 +63,41 @@
     - apt-get install -y libxrender-dev
     - pip install -r requirements.txt
 
-## 二、数据集
-### 2.1 集装箱箱号数据集下载
-    [地址]()
-### 2.2 预处理
-- 代码下载
-```
-$ git clone http://10.128.231.44:7080/yangjianbing/image_ann_preprocess_tool.git
-```
-
-- coco数据格式的标注转为训练label
-```
-$ cd Image_ANN_Preprocess_Tool # 进入该project的目录
-$ python ocr_dataset/container_number/zpmc_convert_detect.py --ann_dir 标注文件的存储目录 --ann_name 标注文件的名称 --label_save_dir 生成训练label的存储目录 --label_save_name 生成训练label的名称 --class_names 标注中的label名称的存储名称
-```
-
-## 三、训练
-### 3.1 数据集
 - 编译
     ```
     cd psenet
     chmod 777 compile.sh
     ./compile.sh
     ```
+
+## 二、数据集
+### 2.1 数据集格式
+- annotation(`.json`)    
+    ```
+    标注内容为dict:
+    key: image_name
+        type: str
+    value: text and polygon
+        type: list
+        [["text1", [polygon1]], ["text2", [polygon2]], ...]
+    例：
+    {"image_0000013744.jpg": [["22G1", [702.22, 329.09, 703.32, 299.02, 773.35, 293.15, 774.82, 323.95]], ["CSLU2212491", [668.1, 261.6, 736.69, 254.65, 763.45, 254.29, 825.4, 248.1, 913.79, 245.12, 914.89, 278.12, 848.52, 281.42, 767.85, 285.09, 667.8, 291.7]]], "image_0000013746.jpg": [["22G1", [721.2, 409.9, 786.56, 410.72, 785.29, 440.0, 718.4, 438.5]], ["CSLU1650873", [691.1, 367.2, 925.8, 377.6, 924.3, 409.2, 687.9, 392.9]]], ...}
+    ```
+- 图片存储：可以存在同一个文件夹下，也可以存在多个文件夹下，对应的修改annotation中的image_name即可（image_name前面加上对应的文件夹名称即可）
+
+
+### 2.2 coco标注格式的annotation，可通过如下脚本处理成上述数据集格式
+```
+$ cd psenet/dataset # 进入该project的目录
+$ python zpmc_convert_detect.py --ann_dir 标注文件的存储目录 --ann_name 标注文件的名称(.json) --label_save_dir 生成训练label的存储目录 --label_save_name 生成训练label的名称(.json) --class_names 标注中的label名称的存储名称(.name)
+
+例：python zpmc_convert_detect.py --ann_dir /root/code/dataset/containercode/annotations --ann_name instances_Train.json --label_save_dir ../data --label_save_name train.json --class_names containercode.name
+
+程序执行完毕后，会在--label_save_dir下生成上述annotation格式的.json文件和--class_names命名的.name文件
+```
+
+## 三、训练
+### 3.1 数据集
 - 找到```dataset/psenet/psenet_ctw.py```文件
 - 修改```line:17-20```，改成上面预处理得到的label路径
     ```
@@ -88,7 +109,7 @@ $ python ocr_dataset/container_number/zpmc_convert_detect.py --ann_dir 标注文
 
 ### 3.2 模型训练
 - 在`psenet`下新建`pretrained`文件夹
-- 下载[预训练模型](https://pan.baidu.com/s/1kDD5nuvkOL-tkuvrafytKA )(密码1234)，并拷贝到`pretrained`文件夹
+- 下载[预训练模型resnet50-imagenet.pth](https://pan.baidu.com/s/1kDD5nuvkOL-tkuvrafytKA )(密码1234)，并拷贝到`pretrained`文件夹
 - 训练指令
     ```
     $ python train.py # 预训练模型在models/backbone/resnet.py中的line211处加载参数   # 或
@@ -134,40 +155,77 @@ $ python zpmc_eval.py --checkpoint checkpoints/checkpoint_epoch_0.pth.tar --img_
     - --result_save_dir：预测结果存储路径
 
 - 精度测试  
-    - 测试代码下载
-    ```
-    $ git clone http://10.128.231.44:7080/yangjianbing/map.git
-    ```
     - 将预测结果，传到测试代码中
-    ```
-    $ rm -rf /xxxx/mAP/input/* # 先清空测试代码中原有的文件
-    $ mv /xxxx/ocr_detect_result/detection-results /xxxx/ocr_detect_result/ground-truth /xxxx/mAP/input
-    ```
+        ```
+        $ cd psenet
+        $ mkdir -p mAP/input
+        $ rm -rf mAP/input/* # 先清空测试代码中原有的文件
+        $ mv /xxxx/ocr_detect_result/detection-results /xxxx/ocr_detect_result/ground-truth /xxxx/mAP/input
+        ```
     - 精度预测指令
-    ```
-    $ python main.py
-    ```
+        ```
+        $ cd mAP
+        $ python main.py
+        ```
 ## 六、covert to onnx
 - 找到`models/psenet.py`，将line87处的`# return det_out`取消注释（注意：导出onnx文件后，一定要把这一行再注释掉，否则`推理`和`精度评估`时会报错）
-- `python zpmc_onnx.py --config config/psenet/psenet_r50_ctw.py --checkpoint checkpoints/checkpoint_epoch_0.pth.tar --report_speed False --input_image_path /root/code/dataset/containercode/images/val/image_0000002754.jpg`
-    - --config(配置文件): config/psenet/psenet_r50_ctw.py
-    - --checkpoint（训练出的模型）
-    - --report_speed：必须设置成False
-    - --input_image_path（预测图片的路径）
+- 
+    ```
+    python zpmc_onnx.py --config config/psenet/psenet_r50_ctw.py --checkpoint checkpoints/checkpoint_epoch_0.pth.tar --report_speed False --input_image_path /root/code/dataset/containercode/images/val/image_0000002754.jpg
+
+    参数解释：
+    --config(配置文件): config/psenet/psenet_r50_ctw.py
+    --checkpoint（训练出的模型）
+    --report_speed：必须设置成False
+    --input_image_path（预测图片的路径）
+    ```
 - 生成的`psenet.onnx`文件保存在`onnx文件夹`下
 
 ## 七、trt
+### 7.1 直接下载配置好的docker image
+- 下载[nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04-trt8.4.tar](https://pan.baidu.com/s/1g8aaeT0655qvW9mj5UcpWg), 提取码: 1234 
+- 载入镜像   
+    `sudo docker load -i xxx/nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04-trt8.4.tar`
+- 启动镜像   
+    `sudo docker run --name psenet-trt -itd  -v /home/ntueee/yangjianbing:/root/code -p 3016:22 -e NVIDIA_DRIVER_CAPABILITIES=compute,utility --gpus all --shm-size="12g" --restart=always nvidia-cuda-11.4.3-cudnn8-devel-ubuntu20.04:trt8.4`
+- 新建一个`psenet_trt`文件夹，用于trt推理
+    - cd ~/code
+    - mkdir psenet_trt
+    - cd psenet_trt
+
+- 将`models`文件夹下的`post_processing`文件夹，拷贝到`psenet_trt`(编译好了再拷贝，若trt运行的python版本跟编译时的环境不一样，则需要再trt环境下重新编译，编译方法见`1.2节`的最下面)
+- 将生成的`onnx`文件夹拷贝到`psenet_trt`
+- 将`zpmc_trt.py`拷贝到`psenet_trt`，line13处，这里导入的`post_processing`包就是上面拷贝的`post_processing`。（若直接拷贝`post_processing`文件夹的话，导入包时去掉前面的`models.`）
+- 编译trt并推理
+    ```
+    python zpmc_trt.py --onnxFile onnx/psenet.onnx --trtFile_save_dir trt --trtFile_save_name psenet16.trt --FPMode FP16 --images_dir /root/code/dataset/containercode/images/val --detect_save_dir result
+    --onnxFile: 导出的onnx文件存储路径
+    --trtFile_save_dir：编译生成的trt文件的存储目录
+    --trtFile_save_name：编译生成的trt文件的名称
+    --FPMode：精度（FP32，FP16）
+    --images_dir：待预测图片存储的目录
+    --detect_save_dir：预测结果存储的目录
+    ```
+
+### 7.2 自己配
 - [环境配置](../../02-Segmetation/yolact_trt/README.MD)
-    - 将`models`文件夹下的`post_processing`文件夹，拷贝(编译好了再拷贝，若trt运行的python版本跟编译时的环境不一样，则需要再trt环境下重新编译)
-    - 找到`zpmc_trt.py`，line13处，这里导入的`post_processing`包就是上面拷贝的`post_processing`。（直接拷贝`post_processing`文件夹的话，导入包时去掉前面的`models.`）
-- `cd 03-OCR/psenet`
-- `python zpmc_trt.py --onnxFile onnx/psenet.onnx --trtFile_save_dir trt --trtFile_save_name psenet16.trt --FPMode FP16 --images_dir /root/code/dataset/containercode/images/val --detect_save_dir result`
-    - --onnxFile: 导出的onnx文件存储路径
-    - --trtFile_save_dir：编译生成的trt文件的存储目录
-    - --trtFile_save_name：编译生成的trt文件的名称
-    - --FPMode：精度（FP32，FP16）
-    - --images_dir：待预测图片存储的目录
-    - --detect_save_dir：预测结果存储的目录
+- 新建一个`psenet_trt`文件夹，用于trt推理
+    - cd ~/code
+    - mkdir psenet_trt
+
+- 将`models`文件夹下的`post_processing`文件夹，拷贝到`psenet_trt`(编译好了再拷贝，若trt运行的python版本跟编译时的环境不一样，则需要再trt环境下重新编译，编译方法见`1.2节`的最下面)
+- 将生成的`onnx`文件夹拷贝到`psenet_trt`
+- 将`zpmc_trt.py`拷贝到`psenet_trt`，line13处，这里导入的`post_processing`包就是上面拷贝的`post_processing`。（直接拷贝`post_processing`文件夹的话，导入包时去掉前面的`models.`）
+- 编译trt并推理
+    ```
+    python zpmc_trt.py --onnxFile onnx/psenet.onnx --trtFile_save_dir trt --trtFile_save_name psenet16.trt --FPMode FP16 --images_dir /root/code/dataset/containercode/images/val --detect_save_dir result
+    --onnxFile: 导出的onnx文件存储路径
+    --trtFile_save_dir：编译生成的trt文件的存储目录
+    --trtFile_save_name：编译生成的trt文件的名称
+    --FPMode：精度（FP32，FP16）
+    --images_dir：待预测图片存储的目录
+    --detect_save_dir：预测结果存储的目录
+    ```
 
 
 

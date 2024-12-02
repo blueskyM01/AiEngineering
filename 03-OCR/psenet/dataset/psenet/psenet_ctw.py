@@ -15,7 +15,7 @@ import random
 
 # ctw_root_dir = '/software/dataset/ZPMC_Container_Number/'
 ctw_train_data_dir = '/root/code/dataset/containercode/images/train'
-ctw_train_gt_dir = '/root/code/AiEngineering/03-OCR/psenet/data/tran.json'
+ctw_train_gt_dir = '/root/code/AiEngineering/03-OCR/psenet/data/train.json'
 ctw_test_data_dir = '/root/code/dataset/containercode/images/val'
 ctw_test_gt_dir = '/root/code/AiEngineering/03-OCR/psenet/data/val.json'
 

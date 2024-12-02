@@ -20,3 +20,6 @@ onnx
 trt
 result
 results
+mAP/input
+nohup.out
+psenet_evaluation_results.log
